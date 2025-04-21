@@ -1,0 +1,741 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>3D Art Calculator</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.68/pdfmake.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.68/vfs_fonts.js"></script>
+<style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            background-color: #FAFAFA;
+            color: #1E1E1E;
+            padding: 48px 24px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .container {
+            max-width: 800px;
+            width: 100%;
+        }
+
+        h1 {
+            font-size: 32px;
+            font-weight: bold;
+            text-align: center;
+            margin-bottom: 24px;
+        }
+
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+
+        select, input {
+            width: 100%;
+            padding: 12px;
+            border-radius: 8px;
+            border: 1px solid #CCC;
+            font-size: 16px;
+        }
+
+        .input-with-help {
+            display: flex;
+            align-items: center;
+        }
+
+        .input-with-help input {
+            flex: 1;
+        }
+
+        .help-btn {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background-color: #d5811d;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-left: 8px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: bold;
+    text-align: center;
+    line-height: 1;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background-color: #d5811d;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-left: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: bold;
+            line-height: 24px;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: none;
+            margin-top: 8px;
+        }
+
+        .btn-primary {
+            background-color: #007BFF;
+            color: white;
+            width: 100%;
+            margin-top: 24px;
+        }
+
+        .btn-primary:hover {
+            background-color: #0069d9;
+        }
+
+        .btn-secondary {
+            background-color: #666666;
+            color: white;
+            margin-right: 8px;
+        }
+
+        .btn-secondary:hover {
+            background-color: #555555;
+        }
+
+        .btn-quote {
+            background-color: #2e4c40;
+            color: white;
+        }
+
+        .btn-quote:hover {
+            background-color: #1f3a30;
+        }
+
+        .button-group {
+            display: flex;
+            margin-top: 16px;
+        }
+
+        .button-group .btn-secondary {
+            flex: 1;
+        }
+
+        .button-group .btn-quote {
+            flex: 1;
+        }
+
+        .results {
+            margin-top: 24px;
+            padding: 16px;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .result-item {
+            margin-bottom: 8px;
+            font-size: 18px;
+        }
+
+        .result-item strong {
+            font-weight: 600;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            overflow-y: auto;
+        }
+
+        .modal-content {
+            background-color: white;
+            margin: 40px auto;
+            padding: 24px;
+            border-radius: 8px;
+            max-width: 800px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .modal-title {
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: #666;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 16px 0;
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        th {
+            background-color: #f5f5f5;
+            font-weight: 600;
+        }
+
+        .tooltip {
+            position: relative;
+            display: inline-block;
+        }
+
+        .tooltip .tooltiptext {
+            visibility: hidden;
+            width: 300px;
+            background-color: #333;
+            color: #fff;
+            text-align: center;
+            border-radius: 6px;
+            padding: 12px;
+            position: absolute;
+            z-index: 1;
+            bottom: 125%;
+            left: 50%;
+            transform: translateX(-50%);
+            opacity: 0;
+            transition: opacity 0.3s;
+            font-size: 14px;
+            font-weight: normal;
+        }
+
+        .tooltip:hover .tooltiptext {
+            visibility: visible;
+            opacity: 1;
+        }
+
+        .learn-more {
+            color: #007BFF;
+            text-decoration: none;
+            font-size: 14px;
+            margin-left: 8px;
+            font-weight: 500;
+        }
+
+        .learn-more:hover {
+            text-decoration: underline;
+        }
+
+        .back-btn {
+            display: block;
+            width: 200px;
+            margin: 20px auto 0;
+            padding: 10px 20px;
+            background-color: #007BFF;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            font-weight: 500;
+            text-align: center;
+        }
+
+        .back-btn:hover {
+            background-color: #0069d9;
+        }
+
+        @media (max-width: 600px) {
+            body {
+                padding: 24px 16px;
+            }
+            
+            .button-group {
+                flex-direction: column;
+            }
+            
+            .btn-secondary, .btn-quote {
+                margin-right: 0;
+                margin-bottom: 8px;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+<h1>3D Art Calculator</h1>
+<div class="form-group">
+<label for="graphics-quality">Choose Graphics Quality 
+                <a class="learn-more" href="graphics_quality_description_table.html">learn more...</a>
+</label>
+<div class="input-with-help">
+<select id="graphics-quality">
+<option value="Hyper-realistic / Cinematic">Hyper-realistic / Cinematic</option>
+<option value="AAA">AAA</option>
+<option value="AA">AA</option>
+<option value="A / Mid-core">A / Mid-core</option>
+<option value="Mobile High-end">Mobile High-end</option>
+<option value="Mobile Mid / Casual">Mobile Mid / Casual</option>
+<option value="Low-poly / Stylized">Low-poly / Stylized</option>
+<option value="Prototype / Placeholder">Prototype / Placeholder</option>
+</select>
+<div class="help-btn tooltip" id="btn_help_graphics">?
+                    <span class="tooltiptext">Graphics Quality defines the overall visual fidelity and realism of assets. It affects the estimated production time per asset.</span>
+</div>
+</div>
+</div>
+<div class="form-group">
+<label for="level-size">Choose Level Size</label>
+<div class="input-with-help">
+<select id="level-size">
+<option value="Small">Small</option>
+<option selected="" value="Medium">Medium</option>
+<option value="Large">Large</option>
+</select>
+<div class="help-btn tooltip" id="btn_help_level_size">?
+                    <span class="tooltiptext">Select the average size of each level or map. Small = 1v1, 2v2 maps; Medium = typical 5v5 maps; Large = open-world or multi-region maps.</span>
+</div>
+</div>
+</div>
+<div class="form-group">
+<label for="characters">Main Characters Quantity</label>
+<div class="input-with-help">
+<input id="characters" min="0" type="number" value="0"/>
+<div class="help-btn tooltip" id="btn_help_characters">?
+                    <span class="tooltiptext">Enter the number of Main Player Characters. These are the controllable heroes or protagonists in your game that usually have the highest level of detail.</span>
+</div>
+</div>
+</div>
+<div class="form-group">
+<label for="levels">Levels/Maps Quantity</label>
+<div class="input-with-help">
+<input id="levels" min="0" type="number" value="0"/>
+<div class="help-btn tooltip" id="btn_help_level_number">?
+                    <span class="tooltiptext">Enter the total number of levels or maps in your game. Each level is considered a separate playable area or mission.</span>
+</div>
+</div>
+</div>
+<div class="form-group">
+<label for="npc">NPC Quantity</label>
+<div class="input-with-help">
+<input id="npc" min="0" type="number" value="0"/>
+<div class="help-btn tooltip" id="btn_help_npc">?
+                    <span class="tooltiptext">Enter the number of Non-Playable Characters (NPCs) such as background characters, companions, civilians, or enemies.</span>
+</div>
+</div>
+</div>
+<div class="form-group">
+<label for="vehicles">Vehicles Quantity</label>
+<div class="input-with-help">
+<input id="vehicles" min="0" type="number" value="0"/>
+<div class="help-btn tooltip" id="btn_help_vehicles">?
+                    <span class="tooltiptext">Enter the number of Playable Vehicles — any craft or machine controlled by the player, such as tanks, cars, aircraft, spaceships, or mechs.</span>
+</div>
+</div>
+</div>
+<div class="form-group">
+<label for="props">Props Quantity</label>
+<div class="input-with-help">
+<input id="props" min="0" type="number" value="0"/>
+<div class="help-btn tooltip" id="btn_help_props">?
+                    <span class="tooltiptext">Enter the number of Props — objects that enrich the environment: crates, terminals, scenery, background and foreground elements.</span>
+</div>
+</div>
+</div>
+<div class="form-group">
+<label for="weapons">Weapons Quantity</label>
+<div class="input-with-help">
+<input id="weapons" min="0" type="number" value="0"/>
+<div class="help-btn tooltip" id="btn_help_weapons">?
+                    <span class="tooltiptext">Enter number of Playable Weapons — guns, swords, shotguns, bats etc.</span>
+</div>
+</div>
+</div>
+<div class="form-group">
+<label for="hour-rate">Hourly Rate ($)</label>
+<div class="input-with-help">
+<input id="hour-rate" min="0" step="0.01" type="number" value="30"/>
+<div class="help-btn tooltip" id="btn_help_hour_rate">?
+                    <span class="tooltiptext">Set the hourly rate in USD for your 3D team. Examples: $5–10/hr = low-cost freelancers, $25–35/hr = standard Upwork mid-tier, $50–70/hr = senior freelancers or studios.</span>
+</div>
+</div>
+</div>
+<button class="btn btn-primary" id="calculate-btn">Calculate</button>
+<div class="results" id="results" style="display: none;">
+<div class="result-item">
+<strong>Total Estimated Hours:</strong> <span id="total-hours">0</span>
+</div>
+<div class="result-item">
+<strong>Total Estimated Cost:</strong> $<span id="total-cost">0</span>
+</div>
+</div>
+<div class="button-group">
+<button class="btn btn-secondary" id="pdf-btn">Get PDF</button>
+<button class="btn btn-quote" id="quote-btn">Get a Quote</button>
+</div>
+</div>
+<!-- Graphics Quality Modal -->
+<div class="modal" id="graphics-modal">
+<div class="modal-content">
+<div class="modal-header">
+<div class="modal-title">Graphics Quality Descriptions</div>
+<button class="close-btn" id="close-graphics-modal">×</button>
+</div>
+<table>
+<thead>
+<tr>
+<th>Level</th>
+<th>Description</th>
+<th>Example Games / Clients</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Hyper-realistic / Cinematic</td>
+<td>Maximum detail level. Used for trailers, cinematics, photorealism.</td>
+<td>The Last of Us II, Star Citizen, CoD MWIII, Squadron 42</td>
+</tr>
+<tr>
+<td>AAA</td>
+<td>High-poly PBR assets, stylized realism, complex materials.</td>
+<td>Cyberpunk 2077, Horizon FW, Escape from Tarkov, Anthem</td>
+</tr>
+<tr>
+<td>AA</td>
+<td>Lower polycount or stylized visuals, mid-tier projects.</td>
+<td>Ready or Not, Squad, Enlisted, Hawken Reborn</td>
+</tr>
+<tr>
+<td>A / Mid-core</td>
+<td>Simple shaders and LODs, optimized for budget indie teams.</td>
+<td>Deep Rock Galactic, Warface, Deliver Us Mars</td>
+</tr>
+<tr>
+<td>Mobile High-end</td>
+<td>Quality mobile assets, simple shaders, good balance of style/detail.</td>
+<td>Genshin Impact (mobile), Warframe (Switch), The Invincible</td>
+</tr>
+<tr>
+<td>Mobile Mid / Casual</td>
+<td>Cartoon-style or flat-shaded stylized visuals.</td>
+<td>Brawl Stars, Clash of Clans, Archero</td>
+</tr>
+<tr>
+<td>Low-poly / Stylized</td>
+<td>Extremely optimized or artistic. Simple meshes with minimal details.</td>
+<td>Crossy Road, Monument Valley, Roboquest</td>
+</tr>
+<tr>
+<td>Prototype / Placeholder</td>
+<td>Simple or graybox placeholder models for internal testing.</td>
+<td>Prototypes, game jams, blockouts</td>
+</tr>
+</tbody>
+</table>
+<a class="back-btn" href="#" id="back-to-calculator">Back to Calculator</a>
+</div>
+</div>
+<script>
+        // Base hours table
+        const baseHoursTable = {
+            "Hyper-realistic / Cinematic": { Characters: 480, Levels: 440, NPCs: 250, Props: 38, Vehicles: 650, Weapons: 250 },
+            "AAA": { Characters: 320, Levels: 260, NPCs: 150, Props: 26, Vehicles: 275, Weapons: 175 },
+            "AA": { Characters: 125, Levels: 155, NPCs: 80, Props: 15, Vehicles: 115, Weapons: 82 },
+            "A / Mid-core": { Characters: 65, Levels: 95, NPCs: 48, Props: 8, Vehicles: 85, Weapons: 32 },
+            "Mobile High-end": { Characters: 110, Levels: 140, NPCs: 80, Props: 15, Vehicles: 115, Weapons: 60 },
+            "Mobile Mid / Casual": { Characters: 24, Levels: 90, NPCs: 18, Props: 6, Vehicles: 41, Weapons: 18 },
+            "Low-poly / Stylized": { Characters: 20, Levels: 55, NPCs: 12, Props: 5, Vehicles: 8, Weapons: 14 },
+            "Prototype / Placeholder": { Characters: 5, Levels: 32, NPCs: 4, Props: 1.5, Vehicles: 5, Weapons: 5 }
+        };
+
+        // Level size factors
+        const levelSizeFactors = {
+            "Small": 0.5,
+            "Medium": 1.0,
+            "Large": 2.0
+        };
+
+        // DOM elements
+        const calculateBtn = document.getElementById('calculate-btn');
+        const pdfBtn = document.getElementById('pdf-btn');
+        const quoteBtn = document.getElementById('quote-btn');
+        const resultsDiv = document.getElementById('results');
+        const totalHoursSpan = document.getElementById('total-hours');
+        const totalCostSpan = document.getElementById('total-cost');
+        const graphicsModal = document.getElementById('graphics-modal');
+        const closeGraphicsModal = document.getElementById('close-graphics-modal');
+        const backToCalculator = document.getElementById('back-to-calculator');
+        const learnMoreLink = document.querySelector('.learn-more');
+
+        // Event listeners
+        calculateBtn.addEventListener('click', calculateEstimate);
+        pdfBtn.addEventListener('click', generatePDF);
+        quoteBtn.addEventListener('click', () => {
+            window.open('https://himasters.art/get-in-touch/', '_blank');
+        });
+        closeGraphicsModal.addEventListener('click', () => {
+            graphicsModal.style.display = 'none';
+        });
+        backToCalculator.addEventListener('click', (e) => {
+            e.preventDefault();
+            graphicsModal.style.display = 'none';
+        });
+        learnMoreLink.addEventListener('click', (e) => {
+            e.preventDefault();
+            graphicsModal.style.display = 'block';
+        });
+
+        // Close modal when clicking outside of it
+        window.addEventListener('click', (event) => {
+            if (event.target === graphicsModal) {
+                graphicsModal.style.display = 'none';
+            }
+        });
+
+        // Calculate estimate
+        function calculateEstimate() {
+            // Get input values
+            const graphicsQuality = document.getElementById('graphics-quality').value;
+            const levelSize = document.getElementById('level-size').value;
+            const characters = parseInt(document.getElementById('characters').value) || 0;
+            const levels = parseInt(document.getElementById('levels').value) || 0;
+            const npc = parseInt(document.getElementById('npc').value) || 0;
+            const vehicles = parseInt(document.getElementById('vehicles').value) || 0;
+            const props = parseInt(document.getElementById('props').value) || 0;
+            const weapons = parseInt(document.getElementById('weapons').value) || 0;
+            const hourRate = parseFloat(document.getElementById('hour-rate').value) || 0;
+
+            // Get base hours and factors
+            const base = baseHoursTable[graphicsQuality];
+            const levelSizeFactor = levelSizeFactors[levelSize];
+
+            // Calculate total hours
+            const totalHours = 
+                characters * base.Characters +
+                npc * base.NPCs +
+                vehicles * base.Vehicles +
+                props * base.Props +
+                weapons * base.Weapons +
+                levels * base.Levels * levelSizeFactor;
+
+            // Calculate total cost
+            const totalCost = totalHours * hourRate;
+
+            // Display results
+            totalHoursSpan.textContent = totalHours.toFixed(1);
+            totalCostSpan.textContent = totalCost.toFixed(0);
+            resultsDiv.style.display = 'block';
+        }
+
+        // Generate PDF
+        function generatePDF() {
+            // Check if results are available
+            if (resultsDiv.style.display !== 'block') {
+                alert('Please calculate the estimate first.');
+                return;
+            }
+
+            // Get input values
+            const graphicsQuality = document.getElementById('graphics-quality').value;
+            const levelSize = document.getElementById('level-size').value;
+            const characters = parseInt(document.getElementById('characters').value) || 0;
+            const levels = parseInt(document.getElementById('levels').value) || 0;
+            const npc = parseInt(document.getElementById('npc').value) || 0;
+            const vehicles = parseInt(document.getElementById('vehicles').value) || 0;
+            const props = parseInt(document.getElementById('props').value) || 0;
+            const weapons = parseInt(document.getElementById('weapons').value) || 0;
+            const hourRate = parseFloat(document.getElementById('hour-rate').value) || 0;
+
+            // Get base hours and factors
+            const base = baseHoursTable[graphicsQuality];
+            const levelSizeFactor = levelSizeFactors[levelSize];
+
+            // Calculate individual hours
+            const charactersHours = characters * base.Characters;
+            const levelsHours = levels * base.Levels * levelSizeFactor;
+            const npcHours = npc * base.NPCs;
+            const vehiclesHours = vehicles * base.Vehicles;
+            const propsHours = props * base.Props;
+            const weaponsHours = weapons * base.Weapons;
+
+            // Calculate totals
+            const totalHours = charactersHours + levelsHours + npcHours + vehiclesHours + propsHours + weaponsHours;
+            const totalCost = totalHours * hourRate;
+
+            // Create PDF document definition
+            const docDefinition = {
+                content: [
+                    { text: '3D Art Production Estimate', style: 'header' },
+                    { text: '\n' },
+                    {
+                        table: {
+                            headerRows: 1,
+                            widths: ['*', 'auto', 'auto', 'auto'],
+                            body: [
+                                [
+                                    { text: 'Asset Type', style: 'tableHeader' },
+                                    { text: 'Quantity', style: 'tableHeader' },
+                                    { text: 'Total hours', style: 'tableHeader' },
+                                    { text: 'Total cost', style: 'tableHeader' }
+                                ],
+                                [
+                                    'Levels',
+                                    levels,
+                                    levelsHours.toFixed(1),
+                                    '$' + (levelsHours * hourRate).toFixed(0)
+                                ],
+                                [
+                                    'Characters',
+                                    characters,
+                                    charactersHours.toFixed(1),
+                                    '$' + (charactersHours * hourRate).toFixed(0)
+                                ],
+                                [
+                                    'Vehicles',
+                                    vehicles,
+                                    vehiclesHours.toFixed(1),
+                                    '$' + (vehiclesHours * hourRate).toFixed(0)
+                                ],
+                                [
+                                    'NPCs',
+                                    npc,
+                                    npcHours.toFixed(1),
+                                    '$' + (npcHours * hourRate).toFixed(0)
+                                ],
+                                [
+                                    'Props',
+                                    props,
+                                    propsHours.toFixed(1),
+                                    '$' + (propsHours * hourRate).toFixed(0)
+                                ],
+                                [
+                                    'Weapons',
+                                    weapons,
+                                    weaponsHours.toFixed(1),
+                                    '$' + (weaponsHours * hourRate).toFixed(0)
+                                ]
+                            ]
+                        }
+                    },
+                    { text: '\n' },
+                    {
+                        text: [
+                            { text: 'Hourly rate: ', bold: true },
+                            '$' + hourRate.toFixed(2)
+                        ]
+                    },
+                    {
+                        text: [
+                            { text: 'Estimated cost: ', bold: true },
+                            '$' + totalCost.toFixed(0)
+                        ]
+                    },
+                    { text: '\n\n' },
+                    {
+                        text: 'The estimate is approximate. Contact us for a tailored quote based on your unique project needs.\nWe provide professional service — from indie to AAA.',
+                        style: 'footerTitle'
+                    },
+                    { text: '\n' },
+                    {
+                        text: [
+                            ' Website: ',
+                            { text: 'https://himasters.art/', link: 'https://himasters.art/' }
+                        ]
+                    },
+                    {
+                        text: [
+                            ' ArtStation: ',
+                            { text: 'https://www.artstation.com/himasters', link: 'https://www.artstation.com/himasters' }
+                        ]
+                    },
+                    {
+                        text: [
+                            ' LinkedIn: ',
+                            { text: 'https://www.linkedin.com/company/himasters', link: 'https://www.linkedin.com/company/himasters' }
+                        ]
+                    },
+                    {
+                        text: [
+                            ' YouTube: ',
+                            { text: 'https://www.youtube.com/@himasters', link: 'https://www.youtube.com/@himasters' }
+                        ]
+                    },
+                    {
+                        text: [
+                            ' Facebook: ',
+                            { text: 'https://www.facebook.com/himasters.art/', link: 'https://www.facebook.com/himasters.art/' }
+                        ]
+                    },
+                    {
+                        text: [
+                            ' Instagram: ',
+                            { text: 'https://www.instagram.com/himasters_studio/', link: 'https://www.instagram.com/himasters_studio/' }
+                        ]
+                    }
+                ],
+                styles: {
+                    header: {
+                        fontSize: 18,
+                        bold: true,
+                        alignment: 'center',
+                        margin: [0, 0, 0, 10]
+                    },
+                    tableHeader: {
+                        bold: true,
+                        fontSize: 13,
+                        color: 'black'
+                    },
+                    footerTitle: {
+                        bold: true,
+                        fontSize: 14,
+                        margin: [0, 10, 0, 5]
+                    }
+                },
+                defaultStyle: {
+                    fontSize: 12
+                }
+            };
+
+            // Generate and download PDF
+            pdfMake.createPdf(docDefinition).download('3D_Art_Production_Estimate.pdf');
+        }
+    </script>
+</body>
+</html>
